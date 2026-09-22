@@ -81,6 +81,12 @@ namespace GameResources.Gameplay.VRController
                 });
             }
         }
+
+        public void SetScale(float scale)
+        {
+            transform.localPosition *= scale;
+            _blackScreenText.rectTransform.localScale *= scale;
+        }
         #endregion
     }
 }

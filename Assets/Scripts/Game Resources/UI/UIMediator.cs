@@ -1,5 +1,6 @@
 using CoreResources.Singleton;
 using CoreResources.UI;
+using CoreResources.Utils;
 using GameResources.Gameplay;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace GameResources.UI
         #endregion
 
         #region Public Methods
-        public void SetMenuPositions(Transform cameraTransform, Vector3 origin, Vector3 forward, Quaternion rotation)
+        public void SetMenuPositions(Vector3 origin, Vector3 forward, Quaternion rotation)
         {
             Vector3 finalPosition = origin + forward * _appCalibrationDistance;
 
@@ -58,6 +59,18 @@ namespace GameResources.UI
             {
                 manager.transform.position = finalPosition;
                 manager.transform.rotation = rotation;
+            }
+        }
+
+        public void SetMenuPositions(Vector3 finalPosition, Quaternion finalRotation, float finalScaleFactor, Transform parent = null)
+        {
+            foreach (UIViewManager manager in _viewManagers)
+            {
+                manager.transform.position = finalPosition;
+                manager.transform.rotation = finalRotation;
+                manager.transform.localScale = new Vector3(finalScaleFactor, finalScaleFactor, finalScaleFactor);
+                if (parent != null)
+                    manager.transform.parent = parent;
             }
         }
 
@@ -75,6 +88,14 @@ namespace GameResources.UI
                 _viewManagers[i].HidePanel();
                 _viewManagers[i].SetMenuInteractability(false);
             }
+        }
+
+        public float GetMinimumRectDimensions()
+        {
+            var mainMenu = _viewManagers.Find((manager) => manager.AssignedViewType == UIViewType.MainMenu);
+            var mainMenuRect = mainMenu.transform.GetComponent<RectTransform>();
+            UIUtils.GetWorldBounds(mainMenuRect, out var xMax, out var xMin, out var yMax, out var yMin);
+            return Mathf.Min(Mathf.Abs(xMax - xMin), Mathf.Abs(yMax - yMin));
         }
         #endregion
 

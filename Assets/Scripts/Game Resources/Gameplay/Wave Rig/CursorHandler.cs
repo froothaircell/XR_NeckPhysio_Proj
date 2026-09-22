@@ -111,6 +111,8 @@ namespace GameResources.Gameplay.VRController
                 }
             }
         }
+
+        public const float DEFAULT_CANVAS_DISTANCE = 2F;
         #endregion
 
         #region Overrides
@@ -170,6 +172,18 @@ namespace GameResources.Gameplay.VRController
                 StopCoroutine(_cursorRefreshCoroutine);
                 _cursorRefreshCoroutine = null;
             }
+        }
+
+        public void SetCursorScales(float distanceFromScreen)
+        {
+            var newCursorDist = 0.7f * distanceFromScreen;
+            var cursorScalingFactor = newCursorDist / DEFAULT_CANVAS_DISTANCE;
+            _canvasDistance = newCursorDist;
+            _defaultCursorSize *= cursorScalingFactor;
+            _paddingMultiplier *= cursorScalingFactor;
+            _spherecastRadius *= cursorScalingFactor;
+
+            ResetCursorDimensions();
         }
         #endregion
 

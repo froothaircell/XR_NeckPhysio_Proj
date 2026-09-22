@@ -198,22 +198,34 @@ namespace CoreResources.Utils
             }
         }
 
-        public void DisplayTargetDistanceFromOrigin_AppP4()
+        public void SetMeshDisplayStatus(bool status)
+        {
+            _fillMeshRenderer.enabled = status;
+            _borderMeshRenderer.enabled = status;
+
+            foreach (var point in _points)
+            {
+                point.GetComponent<MeshRenderer>().enabled = status;
+            }
+        }
+
+        public void DisplayTargetDistanceFromOrigin_AppP4(float gizmosScale = 1f)
         {
             ClearDisplay_AppP4();
 
             Vector3 position = _appP4LastHitPosition;
             Vector3 origin = _centerPos.position;
             Vector3 displacement = position - origin;
+            displacement /= gizmosScale;
 
             if (!_originMarker) _originMarker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             _originMarker.transform.position = origin;
-            _originMarker.transform.localScale = Vector3.one * _gizmoCircleRadius;
+            _originMarker.transform.localScale = Vector3.one * _gizmoCircleRadius * gizmosScale;
             _originMarker.GetComponent<Renderer>().material = _lineMaterial;
 
             if (!_targetMarker) _targetMarker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             _targetMarker.transform.position = position;
-            _targetMarker.transform.localScale = Vector3.one * _gizmoCircleRadius;
+            _targetMarker.transform.localScale = Vector3.one * _gizmoCircleRadius * gizmosScale;
             _targetMarker.GetComponent<Renderer>().material = _lineMaterial;
 
             if (!_connectionLine) _connectionLine = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -222,6 +234,7 @@ namespace CoreResources.Utils
             _connectionLine.transform.up = (position - origin).normalized;
             float distance = displacement.magnitude;
             _connectionLine.transform.localScale = new Vector3(_lineThickness, distance / 2f, _lineThickness);
+            _connectionLine.transform.localScale *= gizmosScale;
             _connectionLine.GetComponent<Renderer>().material = _lineMaterial;
 
             _appP4Text.text = $"Displacement: {displacement}\nDistance: {distance}";

@@ -1,7 +1,9 @@
 using CoreResources.Singleton;
+using GameResources.Gameplay;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GameResources.Pooling
@@ -15,7 +17,7 @@ namespace GameResources.Pooling
 
         private bool _poolInitialized = false;
         private bool _poolLocked = true; // Ensures the spawn function isn't called right after a clean call
-
+        // private Vector3 _originalScale = Vector3.one;
 
         private List<PooledItem> _pool = new List<PooledItem>();
         private List<PooledItem> _spawnedItems = new List<PooledItem>();
@@ -41,6 +43,7 @@ namespace GameResources.Pooling
                 _pool[i].InitializePooledItem(this);
             }
 
+            // _originalScale = _pool.First().transform.localScale;
             _poolInitialized = true;
         }
 
@@ -72,6 +75,7 @@ namespace GameResources.Pooling
 
             beforeSpawn?.Invoke(item);
 
+            // item.transform.localScale *= GameplayHandler.Instance.CachedProjectileScaleFactor;
             item.transform.parent = null;
             item.SpawnItem(position, rotation);
 
@@ -85,7 +89,16 @@ namespace GameResources.Pooling
             _spawnedItems.Remove(item);
             _pool.Add(item);
             item.transform.parent = transform;
+            // item.transform.localScale = _originalScale;
             item.transform.localPosition = Vector3.zero;
+        }
+
+        public void ScaleProjectiles(float scaleFactor)
+        {
+            foreach (ProjectileController item in _pool)
+            {
+                item.UpdateScale(scaleFactor);
+            }
         }
     }
 }

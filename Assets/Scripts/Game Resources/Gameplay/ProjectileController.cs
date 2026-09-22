@@ -25,15 +25,12 @@ namespace GameResources.Gameplay
         [Header("Spline Follow")]
         [SerializeField]
         private BezierWalkerWithSpeed _splineFollower;
-        private float _followSpeed = 1.9f;
 
         [Space(5)]
 
         [Header("Misc Properties")]
         [SerializeField]
-        private float _targetVelocity = 10f;
-        [SerializeField, Range(0f, 1f)]
-        private float _velocityBlendStrength = 0.5f;
+        private float _targetFollowVelocity = 1.9f;
         [SerializeField, Range(0f, 10f)]
         private float _centeringReticleResizingDuration;
         [SerializeField, Range(0f, 2f)]
@@ -131,7 +128,7 @@ namespace GameResources.Gameplay
                     _phase3startPath = false;
                     _splineFollower.enabled = true;
                     _splineFollower.executionStatus = false;
-                    _splineFollower.speed = _followSpeed;
+                    _splineFollower.speed = _targetFollowVelocity;
                     _splineFollower.travelMode = TravelMode.Once;
                     _splineFollower.onPathCompleted.AddListener(OnSplinePathComplete);
 
@@ -378,6 +375,20 @@ namespace GameResources.Gameplay
             _splineFollower.NormalizedT = 0;
             _splineFollower.executionStatus = false;
             // transform.position = spline[0].position;
+        }
+
+        public void UpdateScale(float scale)
+        {
+            _originalScale = transform.localScale.x * scale;
+            _finalScale *= scale;
+            transform.localScale *= scale;
+
+            if (_splineFollower == null)
+                _splineFollower = transform.GetComponent<BezierWalkerWithSpeed>();
+
+            _targetFollowVelocity *= scale;
+            _trailRenderer.minVertexDistance *= scale;
+            _trailRenderer.startWidth *= scale;
         }
         #endregion
     }

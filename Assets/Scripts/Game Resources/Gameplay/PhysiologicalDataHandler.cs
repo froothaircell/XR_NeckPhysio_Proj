@@ -19,6 +19,9 @@ namespace GameResources.Gameplay
         private int _score;
         private const int MAX_SCORE = 15;
 
+        // To scale our readings when accounting for different AR game set placements and scales
+        private float _scaleFactor = 1f;
+
         public int MaxScore => MAX_SCORE;
 
 
@@ -134,6 +137,11 @@ namespace GameResources.Gameplay
 
             if (GameplayHandler.Instance.Phase >= (AppPhase) 1)
                 OnScoreUpdated?.Invoke(_score);
+        }
+
+        public void SetScale(float scale)
+        {
+            _scaleFactor = scale;
         }
 
         public void RecordViewingAngleBounds_Sorted(Vector3 center, List<Vector3> viewLimits)
@@ -328,6 +336,7 @@ namespace GameResources.Gameplay
 
                     Vector3 localOffset = hit - _cachedCenter;
                     Vector2 p2 = new Vector2(Vector3.Dot(localOffset, right), Vector3.Dot(localOffset, up));
+                    p2 /= _scaleFactor;
 
                     DateTime ts = DateTime.UtcNow;
                     _responseBuffer.Add((p2, ts));
@@ -347,6 +356,7 @@ namespace GameResources.Gameplay
                 {
                     Vector3 hit = ray.GetPoint(enter);
                     float distance = Vector3.Distance(hit, _targetReferenceP3.position);
+                    distance /= _scaleFactor;
                     DateTime ts = DateTime.UtcNow;
 
                     _distanceBufferP3.Add((distance, ts));

@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Wave.Native;
 
 namespace GameResources.Gameplay
 {
@@ -35,6 +36,14 @@ namespace GameResources.Gameplay
         #region Serialized Fields
         [SerializeField]
         private float _appCalibrationDistance = 15f;
+        [SerializeField]
+        private float _appCalibrationDistanceFactor = 0.90f;
+        [SerializeField]
+        private float _appCalibrationDistanceFactor_UI = 0.95f;
+        [SerializeField]
+        private float _appCalibrationDistanceFactor_BlackScreen = 0.6f;
+        [SerializeField]
+        private float _appCalibrationScaling = 0.8f;
         [SerializeField]
         private ObjectPool _pool;
         [SerializeField]
@@ -63,8 +72,7 @@ namespace GameResources.Gameplay
         private Transform _spawnCenter;
         [SerializeField]
         private float _minSpawnDelay = 0.8f, 
-        _maxSpawnDelay = 5f,
-        _maxSpawnDistance = 10f;
+        _maxSpawnDelay = 5f;
         [SerializeField]
         private LayerMask _collisionLayerMask;
         [SerializeField]
@@ -96,8 +104,10 @@ namespace GameResources.Gameplay
         private Quaternion _defaultSpawnRotation;
         private Vector3 _defaultLookAreaNormalVector;
         private Vector3 _defaultLookAreaUpVector;
+        private Color? recOriginalColor = null;
         private Coroutine _spawnCoroutine;
         private int _spawnCount, _warmupSelectedCount;
+        private float _cachedProjectileScaleFactor = 1f;
         private bool _triggerPressed = false,
             _inputsAssigned = false,
             _centeringReticleDespawned = false,
@@ -115,6 +125,7 @@ namespace GameResources.Gameplay
         #endregion
 
         public AppPhase Phase => _phase;
+        public float CachedProjectileScaleFactor => _cachedProjectileScaleFactor;
 
         #region Events
         /// <summary>
@@ -138,6 +149,8 @@ namespace GameResources.Gameplay
         #region Overrides
         public override void OnInit()
         {
+            ShowPassthroughUnderlay(true);
+
             _defaultSpawnPosition = _spawnCenter.position;
             _defaultSpawnRotation = _spawnCenter.rotation;
 
@@ -180,27 +193,60 @@ namespace GameResources.Gameplay
         {
             // Set Positions of relevant 
             Vector3 forward = _camHMD.forward;
-            _camHMD.GetPositionAndRotation(out Vector3 origin, out Quaternion rotation);
+            _camHMD.GetPositionAndRotation(out Vector3 origin, out Quaternion finalRotation);
             Vector3 finalPosition = origin + forward * _appCalibrationDistance;
+            Vector3 finalUIPosition = finalPosition;
+            float scaleFactor = 1f;
+
+            // Try to see if a raycast hits a wall mesh
+            if (Physics.Raycast(origin, forward, out var hitInfo))
+            {
+                var cachedCollider = hitInfo.collider;
+                finalPosition = hitInfo.point;
+                var distance = Vector3.Distance(origin, finalPosition);
+                finalPosition = origin + forward * distance * _appCalibrationDistanceFactor;
+                finalUIPosition = origin + forward * distance * _appCalibrationDistanceFactor_UI;
+                finalRotation = cachedCollider.transform.rotation;
+                Quaternion flipRotation = Quaternion.Euler(0, 180f, 0);
+                finalRotation *= flipRotation;
+                var minRectDim = UIMediator.Instance.GetMinimumRectDimensions();
+                
+                _cachedProjectileScaleFactor = scaleFactor = _appCalibrationDistanceFactor * 
+                    Mathf.Abs(
+                        Mathf.Max(
+                            cachedCollider.bounds.size.x, 
+                            cachedCollider.bounds.size.y, 
+                            cachedCollider.bounds.size.z) / minRectDim);
+
+                BlackoutScreenHandler.Instance.SetScale(_appCalibrationDistanceFactor_BlackScreen);
+                CursorHandler.Instance.SetCursorScales(distance);
+                ObjectPool.Instance.ScaleProjectiles(_cachedProjectileScaleFactor);
+                PhysiologicalDataHandler.Instance.SetScale(scaleFactor);
+            }
 
             _gameSetWarmup.transform.position = finalPosition;
-            _gameSetWarmup.transform.rotation = rotation;
+            _gameSetWarmup.transform.rotation = finalRotation;
+            _gameSetWarmup.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
             
             _lookAreaGenerator.transform.position = finalPosition;
-            _lookAreaGenerator.transform.rotation = rotation;
+            _lookAreaGenerator.transform.rotation = finalRotation;
             _lookAreaGenerator.RecalibrateInteractables(
                 out _defaultLookAreaNormalVector, 
                 out _defaultLookAreaUpVector);
-            
+            _lookAreaGenerator.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
             _gameSetPhase2.transform.position = finalPosition;
-            _gameSetPhase2.transform.rotation = rotation;
+            _gameSetPhase2.transform.rotation = finalRotation;
             _defaultSpawnPosition = _spawnCenter.position;
             _defaultSpawnRotation = _spawnCenter.rotation;
-            
-            _gameSetPhase3.transform.position = finalPosition;
-            _gameSetPhase3.transform.rotation = rotation;
+            _gameSetPhase2.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-            UIMediator.Instance.SetMenuPositions(_camHMD, origin, forward, rotation);
+            _gameSetPhase3.transform.position = finalPosition;
+            _gameSetPhase3.transform.rotation = finalRotation;
+            _gameSetPhase3.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
+            // UIMediator.Instance.SetMenuPositions(origin, forward, rotation);
+            UIMediator.Instance.SetMenuPositions(finalUIPosition, finalRotation, scaleFactor);
         }
 
         /// <summary>
@@ -471,7 +517,7 @@ namespace GameResources.Gameplay
                 // var radius = UnityEngine.Random.Range(_minSpawnRadius2, _maxSpawnRadius2);
                 var pos = _lookAreaGenerator.GetRandomPointOnMesh();
                 var dir = (pos - _camHMD.position).normalized;
-                pos += (dir * UnityEngine.Random.Range(0f, _maxSpawnDistance));
+                // pos += (dir * UnityEngine.Random.Range(0f, _maxSpawnDistance));
 
                 // Access the look area handler and use the spawn function
                 // var delay = UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay);
@@ -546,12 +592,15 @@ namespace GameResources.Gameplay
 
                 yield return new WaitUntil(() => _phase4TargetDespawned);
 
+                
                 BlackoutScreenHandler.Instance.SetBlackoutScreen(true, P4_BLACKOUT_TEXT);
+                _lookAreaGenerator.SetMeshDisplayStatus(false);
                 _lookAreaGenerator.SetMeshInteraction(true);
 
                 yield return new WaitUntil(() => _phase4HeadRecentered);
 
-                _lookAreaGenerator.DisplayTargetDistanceFromOrigin_AppP4();
+                _lookAreaGenerator.DisplayTargetDistanceFromOrigin_AppP4(_cachedProjectileScaleFactor);
+                _lookAreaGenerator.SetMeshDisplayStatus(true);
                 _lookAreaGenerator.SetMeshInteraction(false);
 
                 BlackoutScreenHandler.Instance.SetBlackoutScreen(false);
@@ -584,6 +633,35 @@ namespace GameResources.Gameplay
             InputManager.InputActions.XRIRightHandInteraction.Select.performed += RightGripPressed;
 
             _inputsAssigned = true;
+        }
+
+        private void ShowPassthroughUnderlay(bool status)
+        {
+            var _hmdCam = _camHMD.GetComponent<Camera>();
+
+            if (status)
+            {
+                _hmdCam.clearFlags = CameraClearFlags.SolidColor;
+
+                if (recOriginalColor == null)
+                    recOriginalColor = _hmdCam.backgroundColor;
+
+                _hmdCam.backgroundColor = Color.white * 0;
+                Interop.WVR_SetPassthroughOverlayAlpha(0);
+            }
+            else
+            {
+                Interop.WVR_SetPassthroughOverlayAlpha(1);
+                _hmdCam.clearFlags = CameraClearFlags.Skybox;
+
+                if (recOriginalColor.HasValue)
+                    _hmdCam.backgroundColor = recOriginalColor.Value;
+                else
+                    _hmdCam.backgroundColor = new Color(49f / 255f, 77f / 255f, 121f / 255f, 5f / 255f);
+            }
+
+            // Interop.WVR_ShowPassthroughOverlay(!status);
+            Interop.WVR_ShowPassthroughUnderlay(status);
         }
 
         private void InitializeWarmupTarget(PooledItem item)
@@ -661,6 +739,7 @@ namespace GameResources.Gameplay
             if (hardRest)
             {
                 _phase = 0;
+                _cachedProjectileScaleFactor = 1f;
 
                 _gameSetWarmup.SetActive(false);
                 _gameSetPhase2.SetActive(false);

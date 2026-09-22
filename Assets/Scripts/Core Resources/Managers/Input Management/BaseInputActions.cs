@@ -775,7 +775,7 @@ namespace CoreResources.Managers.InputManagement
                     ""name"": ""Select"",
                     ""type"": ""Button"",
                     ""id"": ""33754c03-48ec-46ef-9bc6-22ed6bfdd8e8"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -869,6 +869,15 @@ namespace CoreResources.Managers.InputManagement
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Debug Button 1"",
+                    ""type"": ""Button"",
+                    ""id"": ""92389272-8cc8-473d-baa0-2eb48b2e43c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1034,6 +1043,17 @@ namespace CoreResources.Managers.InputManagement
                     ""processors"": ""ScaleVector2(x=0),StickDeadzone"",
                     ""groups"": ""Generic XR Controller"",
                     ""action"": ""Scale Delta"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b53abdbe-29e7-43d1-85b1-0385b46713a0"",
+                    ""path"": ""<XRController>{LeftHand}/{PrimaryButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Generic XR Controller"",
+                    ""action"": ""Debug Button 1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2919,6 +2939,7 @@ namespace CoreResources.Managers.InputManagement
             m_XRILeftHandInteraction_TranslateAnchor = m_XRILeftHandInteraction.FindAction("Translate Anchor", throwIfNotFound: true);
             m_XRILeftHandInteraction_ScaleToggle = m_XRILeftHandInteraction.FindAction("Scale Toggle", throwIfNotFound: true);
             m_XRILeftHandInteraction_ScaleDelta = m_XRILeftHandInteraction.FindAction("Scale Delta", throwIfNotFound: true);
+            m_XRILeftHandInteraction_DebugButton1 = m_XRILeftHandInteraction.FindAction("Debug Button 1", throwIfNotFound: true);
             // XRI LeftHand Locomotion
             m_XRILeftHandLocomotion = asset.FindActionMap("XRI LeftHand Locomotion", throwIfNotFound: true);
             m_XRILeftHandLocomotion_TeleportSelect = m_XRILeftHandLocomotion.FindAction("Teleport Select", throwIfNotFound: true);
@@ -3489,6 +3510,7 @@ namespace CoreResources.Managers.InputManagement
         private readonly InputAction m_XRILeftHandInteraction_TranslateAnchor;
         private readonly InputAction m_XRILeftHandInteraction_ScaleToggle;
         private readonly InputAction m_XRILeftHandInteraction_ScaleDelta;
+        private readonly InputAction m_XRILeftHandInteraction_DebugButton1;
         /// <summary>
         /// Provides access to input actions defined in input action map "XRI LeftHand Interaction".
         /// </summary>
@@ -3544,6 +3566,10 @@ namespace CoreResources.Managers.InputManagement
             /// Provides access to the underlying input action "XRILeftHandInteraction/ScaleDelta".
             /// </summary>
             public InputAction @ScaleDelta => m_Wrapper.m_XRILeftHandInteraction_ScaleDelta;
+            /// <summary>
+            /// Provides access to the underlying input action "XRILeftHandInteraction/DebugButton1".
+            /// </summary>
+            public InputAction @DebugButton1 => m_Wrapper.m_XRILeftHandInteraction_DebugButton1;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -3603,6 +3629,9 @@ namespace CoreResources.Managers.InputManagement
                 @ScaleDelta.started += instance.OnScaleDelta;
                 @ScaleDelta.performed += instance.OnScaleDelta;
                 @ScaleDelta.canceled += instance.OnScaleDelta;
+                @DebugButton1.started += instance.OnDebugButton1;
+                @DebugButton1.performed += instance.OnDebugButton1;
+                @DebugButton1.canceled += instance.OnDebugButton1;
             }
 
             /// <summary>
@@ -3647,6 +3676,9 @@ namespace CoreResources.Managers.InputManagement
                 @ScaleDelta.started -= instance.OnScaleDelta;
                 @ScaleDelta.performed -= instance.OnScaleDelta;
                 @ScaleDelta.canceled -= instance.OnScaleDelta;
+                @DebugButton1.started -= instance.OnDebugButton1;
+                @DebugButton1.performed -= instance.OnDebugButton1;
+                @DebugButton1.canceled -= instance.OnDebugButton1;
             }
 
             /// <summary>
@@ -5114,6 +5146,13 @@ namespace CoreResources.Managers.InputManagement
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnScaleDelta(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Debug Button 1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnDebugButton1(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "XRI LeftHand Locomotion" which allows adding and removing callbacks.

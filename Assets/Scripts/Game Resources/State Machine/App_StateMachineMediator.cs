@@ -6,6 +6,7 @@ using GameResources.UI;
 using GameResources.Gameplay;
 using GameResources.Gameplay.VRController;
 using CoreResources.Managers;
+using GameResources.PerceptionManagement;
 
 namespace GameResources.StateMachine
 {
@@ -18,6 +19,8 @@ namespace GameResources.StateMachine
         #region Subsystems
         [SerializeField]
         private InputManager _inputManager;
+        [SerializeField]
+        private ScenePerceptionHandler _scenePerceptionHandler;
         [SerializeField]
         private ObjectPool _objPool;
         [SerializeField]
@@ -127,6 +130,8 @@ namespace GameResources.StateMachine
 
             _inputManager.gameObject.SetActive(true);
             _inputManager.InitSingleton();
+            _scenePerceptionHandler.gameObject.SetActive(true);
+            _scenePerceptionHandler.InitSingleton();
             _objPool.gameObject.SetActive(true);
             _objPool.InitSingleton();
             _UIManager.gameObject.SetActive(true);
@@ -138,6 +143,7 @@ namespace GameResources.StateMachine
         private void DeInitializeManagers()
         {
             _inputManager.CleanSingleton();
+            _scenePerceptionHandler.CleanSingleton();
             _objPool.CleanSingleton();
             _UIManager.CleanSingleton();
             _gameManager.CleanSingleton();
