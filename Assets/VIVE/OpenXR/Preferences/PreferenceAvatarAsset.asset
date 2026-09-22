@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 975057b4fdcfb8142b3080d19a5cc712, type: 3}
-  m_Name: OpenXR Editor Settings
+  m_Script: {fileID: 11500000, guid: 94f6766384418a0418eb5ebdb371be20, type: 3}
+  m_Name: PreferenceAvatarAsset
   m_EditorClassIdentifier: 
-  Keys: 0100000007000000
-  Values:
-  - featureSets: []
-  - featureSets:
-    - com.htc.vive.openxr.featureset.vivexr
-  m_vulkanAdditionalGraphicsQueue: 0
+  SupportVrm0: 0
+  SupportVrm1: 0
