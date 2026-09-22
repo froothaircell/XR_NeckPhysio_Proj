@@ -248,6 +248,24 @@ namespace GameResources.Gameplay
             // UIMediator.Instance.SetMenuPositions(origin, forward, rotation);
             UIMediator.Instance.SetMenuPositions(finalUIPosition, finalRotation, scaleFactor);
         }
+
+        /// <summary>
+        /// Returns a pair of values, namely the distance 
+        /// of the camera from a  subject, and the distance 
+        /// of the camera from the center spawn position 
+        /// respectively
+        /// </summary>
+        /// <param name="subject">
+        /// The object to get the first distance value for
+        /// </param>
+        /// <returns></returns>
+        public Tuple<float, float> GetDistanceTuple(Transform subject)
+        {
+            var tuple = new Tuple<float, float>(
+                Vector3.Distance(subject.position, _camHMD.position), 
+                Vector3.Distance(_spawnCenter.position, _camHMD.position));
+            return tuple;
+        }
         #endregion
 
         #region Event Listeners
@@ -407,6 +425,8 @@ namespace GameResources.Gameplay
 
         private void OnValidSelection(Transform objTransform, Collider objCollider)
         {
+            if (objCollider == null || objTransform == null) return;
+
             if (!_triggerPressed && (_collisionLayerMask.value & (1 << objCollider.gameObject.layer)) > 0)
             {
                 var currSelection = objCollider.GetComponent<ProjectileController>();

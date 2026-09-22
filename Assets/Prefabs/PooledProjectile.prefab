@@ -153,6 +153,7 @@ MonoBehaviour:
   _velocityBlendStrength: 0.16
   _centeringReticleResizingDuration: 0.5
   _centeringReticleResettingDuration: 0.2
+  _distanceBasedProjectileResizeFactor: 1.7
   _rb: {fileID: 6381193690023294858}
   _validCollisionLayers:
     serializedVersion: 2

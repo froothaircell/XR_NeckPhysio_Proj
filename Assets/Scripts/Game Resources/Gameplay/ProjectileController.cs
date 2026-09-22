@@ -35,6 +35,8 @@ namespace GameResources.Gameplay
         private float _centeringReticleResizingDuration;
         [SerializeField, Range(0f, 2f)]
         private float _centeringReticleResettingDuration;
+        [SerializeField, Range(0f, 2f)]
+        private float _distanceBasedProjectileResizeFactor;
         [SerializeField]
         private Rigidbody _rb;
         [SerializeField]
@@ -116,6 +118,7 @@ namespace GameResources.Gameplay
                 case ProjectileMode.Phase2Projectile:
                 default:
                     _projectileMaterial.SetColor("_EmissionColor", _phase2ProjectileColor);
+                    SetProjectileSizeFromDistance();
                     break;
                 case ProjectileMode.Phase3Projectile:
                     _projectileMaterial.SetColor("_EmissionColor", _phase3ProjectileColor);
@@ -140,6 +143,7 @@ namespace GameResources.Gameplay
                     break;
                 case ProjectileMode.Phase4Target:
                     _projectileMaterial.SetColor("_EmissionColor", _phase4TargetColor);
+                    SetProjectileSizeFromDistance();
                     break;
                 case ProjectileMode.WarmupTarget:
                     _projectileMaterial.SetColor("_EmissionColor", _warmupTargetColor1);
@@ -195,7 +199,6 @@ namespace GameResources.Gameplay
                     break;
                 case ProjectileMode.WarmupTarget:
                     SimulateWarmupTargets();
-
                     break;
                 default:
                     // SimulatePhase2Projectile();
@@ -213,6 +216,14 @@ namespace GameResources.Gameplay
         #endregion
 
         #region Private Methods
+        private void SetProjectileSizeFromDistance()
+        {
+            var distTuple = GameplayHandler.Instance.GetDistanceTuple(transform);
+            float scaleFactor = (distTuple.Item1 / distTuple.Item2) * _distanceBasedProjectileResizeFactor;
+            Vector3 newLocalScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            transform.localScale = newLocalScale;
+        }
+
         private void SimulateCenteringReticle()
         {
             if (!IsPooled)
