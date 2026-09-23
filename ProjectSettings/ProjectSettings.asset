@@ -146,9 +146,6 @@ PlayerSettings:
   - {fileID: -944628639613478452, guid: 98a83556031250f48a8f7c9a73a0b160, type: 3}
   - {fileID: 11400000, guid: 84194b599b8866f4696816b35f0cad18, type: 2}
   - {fileID: 11400000, guid: 2d3acefa90695834e946993a4d29518b, type: 2}
-  - {fileID: -9024093499392638662, guid: b0bb1ab8b8353874cbbac2ccc16af220, type: 2}
-  - {fileID: 11400000, guid: f053c7cdbbacdbe449afd966a0d75f89, type: 2}
-  - {fileID: 3493961634909570923, guid: a3fe1bdaa01c9754c8cb3b24a9d552b9, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -169,7 +166,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.vrm.unity.VRNeckTest
+    Android: com.vrm.unity.ARNeckTest
   buildNumber:
     Standalone: 0
     VisionOS: 0

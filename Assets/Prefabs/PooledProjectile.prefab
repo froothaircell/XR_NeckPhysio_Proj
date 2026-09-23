@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 544476117035418422}
+  - component: {fileID: 7899130196724698355}
+  - component: {fileID: -8621245114143319834}
   - component: {fileID: 656980046585799541}
   - component: {fileID: 7515981691910853259}
   - component: {fileID: 9058433431093239422}
   - component: {fileID: 6381193690023294858}
-  - component: {fileID: 7899130196724698355}
-  - component: {fileID: -8621245114143319834}
   - component: {fileID: -2675595989743708932}
   m_Layer: 7
   m_Name: PooledProjectile
@@ -38,6 +38,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7899130196724698355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3638476001040999290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966589a509b19514fa92a31b223f8b54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _splineFollower: {fileID: -8621245114143319834}
+  _targetFollowVelocity: 1.9
+  _centeringReticleResizingDuration: 0.5
+  _centeringReticleResettingDuration: 0.2
+  _distanceBasedProjectileResizeFactor: 0.3
+  _rb: {fileID: 6381193690023294858}
+  _validCollisionLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  _centeringReticleColor: {r: 2.9960785, g: 0.12738614, b: 0, a: 1}
+  _phase2ProjectileColor: {r: 0, g: 0.60258794, b: 1.886792, a: 1}
+  _phase3ProjectileColor: {r: 0.069386266, g: 2.9960785, b: 0, a: 1}
+  _phase4TargetColor: {r: 0, g: 0, b: 0, a: 0}
+  _warmupTargetColor1: {r: 2.9960785, g: 0.09892665, b: 0.09892665, a: 1}
+  _warmupTargetColor2: {r: 0.09892664, g: 0.5785011, b: 2.9960785, a: 1}
+  _trailRenderer: {fileID: -2675595989743708932}
+--- !u!114 &-8621245114143319834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3638476001040999290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148310ac13c958d4c93f53cdfe985375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spline: {fileID: 0}
+  travelMode: 0
+  speed: 1.9
+  m_normalizedT: 0
+  rotationLerpModifier: 100
+  lookAt: 1
+  onPathCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  executionStatus: 0
 --- !u!33 &656980046585799541
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -136,57 +186,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &7899130196724698355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3638476001040999290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966589a509b19514fa92a31b223f8b54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _splineFollower: {fileID: -8621245114143319834}
-  _targetVelocity: 5
-  _velocityBlendStrength: 0.16
-  _centeringReticleResizingDuration: 0.5
-  _centeringReticleResettingDuration: 0.2
-  _distanceBasedProjectileResizeFactor: 1.7
-  _rb: {fileID: 6381193690023294858}
-  _validCollisionLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  _centeringReticleColor: {r: 2.9960785, g: 0.12738614, b: 0, a: 1}
-  _phase2ProjectileColor: {r: 0, g: 0.60258794, b: 1.886792, a: 1}
-  _phase3ProjectileColor: {r: 0.069386266, g: 2.9960785, b: 0, a: 1}
-  _phase4TargetColor: {r: 0, g: 0, b: 0, a: 0}
-  _warmupTargetColor1: {r: 2.9960785, g: 0.09892665, b: 0.09892665, a: 1}
-  _warmupTargetColor2: {r: 0.09892664, g: 0.5785011, b: 2.9960785, a: 1}
-  _trailRenderer: {fileID: -2675595989743708932}
---- !u!114 &-8621245114143319834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3638476001040999290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 148310ac13c958d4c93f53cdfe985375, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spline: {fileID: 0}
-  travelMode: 0
-  speed: 1.9
-  m_normalizedT: 0
-  rotationLerpModifier: 100
-  lookAt: 1
-  onPathCompleted:
-    m_PersistentCalls:
-      m_Calls: []
-  executionStatus: 0
 --- !u!96 &-2675595989743708932
 TrailRenderer:
   serializedVersion: 3

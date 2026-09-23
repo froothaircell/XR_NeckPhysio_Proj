@@ -262,7 +262,7 @@ namespace GameResources.Gameplay
         public Tuple<float, float> GetDistanceTuple(Transform subject)
         {
             var tuple = new Tuple<float, float>(
-                Vector3.Distance(subject.position, _camHMD.position), 
+                Vector3.Distance(subject.position, _camHMD.position),
                 Vector3.Distance(_spawnCenter.position, _camHMD.position));
             return tuple;
         }
