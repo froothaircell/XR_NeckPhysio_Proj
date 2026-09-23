@@ -7,6 +7,18 @@
       "dependencies": {},
       "hash": "f213ff497e4ff462a77319cf677cf20cc0860ca9"
     },
+    "com.htc.upm.vive.openxr": {
+      "version": "https://github.com/ViveSoftware/VIVE-OpenXR.git?path=com.htc.upm.vive.openxr",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.xr.management": "4.2.1",
+        "com.unity.inputsystem": "1.7.0",
+        "com.unity.xr.openxr": "1.12.1",
+        "com.unity.xr.interaction.toolkit": "2.5.4"
+      },
+      "hash": "25a5fd212420688952ead9deba735357656278ec"
+    },
     "com.htc.upm.wave.essence": {
       "version": "https://github.com/ViveSoftware/VIVE-Wave.git?path=com.htc.upm.wave.essence",
       "depth": 0,

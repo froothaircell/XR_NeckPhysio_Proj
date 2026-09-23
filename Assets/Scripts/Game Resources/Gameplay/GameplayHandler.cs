@@ -425,6 +425,8 @@ namespace GameResources.Gameplay
 
         private void OnValidSelection(Transform objTransform, Collider objCollider)
         {
+            if (objCollider == null || objTransform == null) return;
+
             if (!_triggerPressed && (_collisionLayerMask.value & (1 << objCollider.gameObject.layer)) > 0)
             {
                 var currSelection = objCollider.GetComponent<ProjectileController>();

@@ -199,7 +199,6 @@ namespace GameResources.Gameplay
                     break;
                 case ProjectileMode.WarmupTarget:
                     SimulateWarmupTargets();
-
                     break;
                 default:
                     // SimulatePhase2Projectile();
